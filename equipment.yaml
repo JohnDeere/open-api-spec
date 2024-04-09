@@ -1,0 +1,58 @@
+type: object
+title: Equipment
+allOf:
+  - $ref: 'resource.yaml'
+  - type: object
+    properties:
+      name:
+        type: string
+        description: Equipment Name.
+        example: Cates 8360R 055358
+      serialNumber:
+        type: string
+        description: Serial Number of the Equipment and passed on the query parameter
+        example: 1RW8360RLCD055358
+      engineSerialNumber:
+        type: string
+      isSerialNumberCertified:
+        type: boolean
+        example: true
+      make:
+        $ref: './equipment-make.yaml'
+      type:
+        $ref: './equipment-type.yaml'
+      isgType:
+        $ref: './equipment-isg-type.yaml'
+      model:
+        $ref: './equipment-model.yaml'
+      organization:
+        $ref: '../../shared/schemas_v31/resource.yaml'
+      archived:
+        type: boolean
+        example: true
+      principalId:
+        type: string
+        description: Unique id for principal equipment
+      organizationRole:
+        $ref: './organization-role.yaml'
+      ERID:
+        type: string
+        description: |
+          Unique identifier of the Equipment.
+        example: fcdc83cb-8840-4215-84b5-1769889db932
+      icon:
+        $ref: './equipment-icon.yaml'
+      offsets:
+        $ref: './offsets.yaml'
+      devices:
+        items:
+          anyOf:
+            - $ref: './display.yaml'
+            - $ref: './position-receiver.yaml'
+            - $ref: './telematics-gateway.yaml'
+      capabilities:
+        type: array
+        items:
+          $ref: './capability.yaml'
+      pairingDetails:
+        $ref: './pairing-details.yaml'

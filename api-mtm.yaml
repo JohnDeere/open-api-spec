@@ -1,0 +1,345 @@
+equipment-make-openapi: 3.0.3
+info:
+  title: Equipment Make API
+  description: This API has all the operations for Equipment Make resources.
+  version: "2.0"
+servers:
+  - url: https://equipmentapi.deere.com/isg
+tags:
+  - name: Equipment Make Resource
+    description: |
+      This resource provides the ability to retrieve Equipment Make information
+      based on the supplied query parameters.
+paths:
+  /equipmentMakes:
+    get:
+      tags:
+        - Equipment Make Resource
+      description: |
+        - Retrieves Equipment Makes with embed
+        - This endpoint has 2-legged access only.
+      operationId: getEquipmentMakes
+      parameters:
+        - $ref: "#/components/parameters/originator"
+        - $ref: "#/components/parameters/deprecated"
+        - $ref: "#/components/parameters/embed"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "../shared/schemas_v31/link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './schemas_v31/equipment-make.yaml'
+        403:
+          description: User is not two-legged authorized
+  /equipmentMakes/{equipmentMakeId}:
+    get:
+      tags:
+        - Equipment Make Resource
+      description: |
+        - Retrieve Equipment Make by Id with embed
+      operationId: getEquipmentMakesById
+      parameters:
+        - $ref: "#/components/parameters/EquipmentMakeId"
+        - $ref: "#/components/parameters/embed"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './equipment-make.yaml'
+        403:
+          description: User is not two-legged authorized
+        404:
+          description: Resource Not foundapi-makes
+  /equipmentMakes/{makeId}/equipmentTypes:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - This operation retrieves a list of Equipment Types by makeId supplied query parameters.
+      operationId: getEquipmentTypesByMakeId
+      parameters:
+
+        - $ref: '#/components/parameters/MakeId'
+        - $ref: '#/components/parameters/deprecated'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "../shared/schemas_v31/link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './schemas_v31/equipment-type.yaml'
+  /equipmentMakes/{makeId}/equipmentTypes/{equipmentTypeId}:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - Retrieve Equipment Type by Make Id and Type Id. 
+      operationId: getEquipmentType
+      parameters:
+        - $ref: '#/components/parameters/MakeId'
+        - $ref: '#/components/parameters/TypeId'
+        - $ref: '#/components/parameters/embed'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas_v31/equipment-type.yaml"
+        404:
+          description: Resource Not Found.
+  /equipmentTypes:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - Retrieve all Equipment Types with embed.
+      operationId: getEquipmentTypes
+      parameters:
+        - $ref: "#/components/parameters/EquipmentTypeName"
+        - $ref: "#/components/parameters/EquipmentMakeName"
+        - $ref: "#/components/parameters/deprecated"
+        - $ref: "#/components/parameters/embed"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: "./equipment-type.yaml"
+  /organizations/{organizationId}/equipmentModels:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+    post:
+        tags:
+            - Equipment Model Resource
+        description: |
+          - This operation creates a new custom Equipment Model.
+        operationId: createEquipmentModel
+        requestBody:
+            content:
+              application/json:
+                schema:
+                  $ref: './schemas_v31/equipment-model.yaml'
+        responses:
+          201:
+            description: Created
+          400:
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: './../shared/schemas/Errors.yaml/#/components/schemas/Errors'
+          403:
+            description: User is not two-legged authorized
+
+  /organizations/{organizationId}/equipmentModels/{equipmentModelId}:
+    parameters:
+      - $ref: '#/components/parameters/OrganizationId'
+      - $ref: '#/components/parameters/EquipmentModelId'
+    delete:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation deletes custom Equipment Model.
+        - This endpoint has 2-legged access only.
+      operationId: deleteEquipmentModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './schemas_v31/equipment-model.yaml'
+      responses:
+        204:
+          description: No Content
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: './errors.yaml'
+        403:
+          description: User is not two-legged authorized
+
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
+    get:
+        tags:
+            - Equipment Model Resource
+        description: |
+          - This operation retrieves a list of Equipment Models based on makeId and typeId.
+        operationId: getEquipmentModelsByMakeIdAndTypeId
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  properties:
+                    links:
+                      type: array
+                      items:
+                        $ref: '../shared/schemas_v31/link.yaml'
+                    values:
+                      type: array
+                      items:
+                        $ref: './schemas_v31/equipment-model.yaml'
+          403:
+            description: User is not two-legged authorized
+
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels/{equipmentModelId}:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
+      - $ref: '#/components/parameters/EquipmentModelId'
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a single Equipment Model based on given makeId, typeId and modelId.
+      operationId: getEquipmentModelsByMakeIdAndTypeId
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './schemas_v31/equipment-model.yaml'
+        403:
+          description: User is not two-legged authorized
+
+  /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentISGTypeId}/equipmentModels:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentISGTypeId'
+    get:
+        tags:
+            - Equipment Model Resource
+        description: |
+          - This operation retrieves a list of Equipment Models based on given makeId and ISGtypeId.
+        operationId: getEquipmentModelsByMakeIdAndISGTypeId
+        responses:
+            200:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                    properties:
+                      links:
+                        type: array
+                        items:
+                          $ref: './link.yaml'
+                      values:
+                        type: array
+                        items:
+                          $ref: './equipment-model.yaml'
+            403:
+              description: User is not two-legged authorized
+
+  /equipmentModels:
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a list of Equipment Models based on the supplied query parameters.
+      operationId: getEquipmentModels
+      parameters:
+        - $ref: "#/components/parameters/originator"
+        - $ref: "#/components/parameters/category"
+        - $ref: "#/components/parameters/deprecated"
+        - $ref: "#/components/parameters/organizationIds"
+        - $ref: "#/components/parameters/embed"
+        - $ref: "#/components/parameters/pageOffset"
+        - $ref: "#/components/parameters/itemLimit"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './equipment-model.yaml'
+
+
+components:
+  parameters:
+    EquipmentMakeId:
+      name: equipmentMakeId
+      in: path
+      required: true
+      description: ID for Equipment Make
+      schema:
+        type: integer
+        format: int32
+        example: 1111
+    deprecated:
+      name: deprecated
+      in: query
+      required: false
+      description: Whether to filter makes by the deprecated flag
+      schema:
+        type: string
+        enum:
+          - false
+          - true
+          - all
+        example: false
+        default: all
+    embed:
+      name: embed
+      in: query
+      required: false
+      description: List of embed data for the Equipment Make
+      schema:
+        type: array
+        items:
+          type: string
+        example: ["equipmentType", "equipmentISGType"]
+        enum:
+          - equipmentType
+          - equipmentISGType
+

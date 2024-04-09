@@ -1,0 +1,11 @@
+type: object
+title: EquipmentIcon
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      name:
+        type: string
+        example: JOHN DEERE
+      iconStyle:
+        $ref: './icon-style.yaml'

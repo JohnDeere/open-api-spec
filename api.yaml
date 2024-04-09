@@ -1,0 +1,432 @@
+openapi: 3.0.3
+info:
+  title: Equipment Management API
+  description: This API has all the operations for equipment resource.
+  version: "2.0"
+servers:
+  - url: https://equipmentapi.deere.com/isg
+tags:
+  - name: Equipment Resource
+    description: |
+      This resource provides the ability to retrieve equipment information
+      based on the supplied query parameters.
+paths:
+  /equipment:
+    get:
+      tags:
+        - Equipment Resource
+      description: |
+        - Retrieve all Equipment by either of the following query parameters - 
+          1. Primary filters:
+             - OrganizationEquipment id(s)
+             - Organization id(s) 
+             - SerialNumber(s) and/or OrganizationId(s)
+             - Principal id(s) and/or OrganizationId(s)
+          2. Supported secondary filters
+              - categories
+              - capableOf
+              - organizationRole.type
+              - archived
+          3. Other parameter(s)
+              - embed
+        - If none of the primary parameters/filters are supplied in the request 
+              - Should return all the equipment from the organizations that user has access to.
+              - Should return 403, when user does has access to any organization.
+      parameters:
+        - $ref: '#/components/parameters/OrganizationEquipmentIds'
+        - $ref: '#/components/parameters/EquipmentSerialNumbers'
+        - $ref: '#/components/parameters/OrganizationIds'
+        - $ref: '#/components/parameters/PrincipalIds'
+        - $ref: '#/components/parameters/CapableOf'
+        - $ref: '#/components/parameters/Categories'
+        - $ref: '#/components/parameters/Role'
+        - $ref: '#/components/parameters/Archived'
+        - $ref: '#/components/parameters/EmbedForList'
+        - $ref: '#/components/parameters/Originator'
+        - $ref: '#/components/parameters/PageOffset'
+        - $ref: '#/components/parameters/ItemLimit'
+      responses:
+        200:
+          description: Equipment(s) found based on the query parameters and filters.
+          content:
+            application/json:
+              schema:
+                properties:
+                  values:
+                    type: array
+                    items:
+                      anyOf:
+                        - $ref: '#components/schemas/impliment.yaml'
+                        - $ref: 'machine.yaml'
+        400:
+          description: Bad Request - No query parameters provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        403:
+          description: |
+            Authorization Error 
+            - user/applications does not have access to api or resource
+            or 
+            - user does not have required permissions/BusinessActivities for the org.
+    head:
+      tags:
+        - Equipment Resource
+      description: |
+        - Retrieve count of Equipment by either of the following query parameters - 
+            1. Primary filters:
+                - Organization id(s) 
+            2. Supported secondary filters
+                - categories
+                - capableOf
+                - organizationRole.type
+                - archived
+        - If none of the primary parameters/filters are supplied in the request 
+              - Should return all the equipment from the organizations that user has access to.
+              - Should return 403, when user does has access to any organization.
+        - Permissions: EQUIPMENT_1
+        - BusinessActivity: VIEW_EQUIPMENT_LIST_API
+      parameters:
+        - $ref: '#/components/parameters/OrganizationIds'
+        - $ref: '#/components/parameters/CapableOf'
+        - $ref: '#/components/parameters/Categories'
+        - $ref: '#/components/parameters/Role'
+        - $ref: '#/components/parameters/Archived'
+      responses:
+        200:
+          description: Equipment(s) found based on the query parameters and filters.
+          headers:
+            X-Deere-Count:
+              schema:
+                type: integer
+                format: int32
+                description: Total count of devices based on the query parameters.
+        400:
+          description: Bad Request - No query parameters provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        403:
+          description: |
+            Authorization Error 
+            - user/applications does not have access to api or resource
+            or 
+            - user does not have required permissions/BusinessActivities for the org.
+
+  /organizations/{organizationId}/equipment:
+    post:
+      tags:
+        - Equipment Resource
+      description: |
+        - Create Equipment in requested organization.
+      operationId: createEquipment
+      parameters:
+        - $ref: '#/components/parameters/organizationId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: 'machine.yaml'
+                - $ref: 'implement.yaml'
+        required: true
+      responses:
+        201:
+          description: Created
+        202:
+          description: Accepted
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        403:
+          description: User is not authorized for this request.
+
+  /equipment/{id}:
+    get:
+      tags:
+        - Equipment Resource
+      description: |
+        - Get Equipment by OrganizationEquipment ID. 
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        200:
+          description: Equipment found by Id or Serial Number
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: 'machine.yaml'
+                  - $ref: 'implement.yaml'
+        404:
+          description: Equipment not found
+        403:
+          description: |
+            Authorization Error 
+            - user/applications does not have access to api or resource
+            or 
+            - user does not have required permissions/BusinessActivities for the org.
+    put:
+      tags:
+        - Equipment Resource
+      description: |
+        - Update Equipment by OrganizationEquipment Id.
+      operationId: putEquipment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: 'equipment-patch.yaml'
+      responses:
+        200:
+          description: Patch Successful
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        403:
+          description: User is not authorized for this request.
+    patch:
+      tags:
+        - Equipment Resource
+      description: |
+        - Patch by OrganizationEquipment Id will allow the following
+            1. Transfer Equipment to new organization, where paired devices can also be requested for transfer along with the equipment. 
+                - Permissions: EQUIPMENT_3
+                - BusinessActivity: TRANSFER_ADMIN_RIGHTS
+            2. Update archived state of equipment, also allows to update the archived state of paired devices. 
+                - Permissions: EQUIPMENT_2
+            4. Update Name of the Equipment
+                - Permissions: EQUIPMENT_2
+                - BusinessActivity: EDIT_EQUIPMENT_LIST
+      operationId: patchEquipment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './equipment-patch.yaml'
+      responses:
+        200:
+          description: Patch Successful
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        403:
+          description: User is not authorized for this request.
+    delete:
+      tags:
+        - Equipment Resource
+      description: |
+        - Delete OrganizationEquipment by OrganizationEquipment Id.
+      operationId: deleteEquipment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: Deleted
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        403:
+          description: User is not authorized for this request.
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: An english description of the error
+          example: <parameter> was invalid because <reason>
+        code:
+          type: string
+          description: A string constant representing the type of error
+          example: 400
+        field:
+          type: string
+          description: The name of the property or parameter deemed invalid
+          example: Machine.serialNumber
+        gud:
+          type: string
+          format: uuid
+          description: A reference to this encounter of the error, for traceability and troubleshooting
+          example: 9b331708-10e8-4e15-8097-a9aed7455d6d
+        invalidValue:
+          type: string
+          description: The value that was supplied for this field in the request
+          example: null
+      readOnly: true
+    Errors:
+      type: array
+      items:
+        $ref: '#/components/schemas/Error'
+      readOnly: true
+
+
+
+  parameters:
+    OrganizationEquipmentIds:
+      name: ids
+      in: query
+      required: false
+      description: List of OrganizationEquipment Ids (these ids are unique across all orgs)
+      schema:
+        type: array
+        items:
+          type: integer
+        example: [1, 2, 3]
+    EquipmentSerialNumbers:
+      name: serialNumbers
+      in: query
+      required: false
+      description: List of serial numbers of the equipment
+      schema:
+        type: array
+        items:
+          type: string
+        example: ["A01775E760247", "1DW410ETHFF669067"]
+    OrganizationIds:
+      name: organizationIds
+      in: query
+      required: false
+      description: List of OrganizationIds
+      schema:
+        type: array
+        items:
+          type: integer
+        example: [1, 2, 3]
+    PrincipalIds:
+      name: principalIds
+      in: query
+      required: false
+      description: List of PrincipalIds
+      schema:
+        type: array
+        items:
+          type: integer
+        example: [1, 2, 3]
+    PageOffset:
+      name: pageOffset
+      in: query
+      required: false
+      description: Refers to the page number
+      schema:
+        type: integer
+        format: int32
+        default: 0
+      example: 1
+    ItemLimit:
+      name: itemLimit
+      in: query
+      required: false
+      description: Refers to number of items per page
+      schema:
+        type: integer
+        format: int32
+        default: 100
+        maximum: 5000
+      example: 10
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+      example: 1111
+    organizationId:
+      name: organizationId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+      example: 1234
+    EmbedForList:
+      name: embed
+      in: query
+      required: false
+      description: embed 'pairingDetails' is only supported along with 'devices' or 'equipment' embeds
+      schema:
+        type: string
+        enum:
+          - devices
+          - equipment
+          - icon
+          - pairingDetails
+    Embed:
+      name: embed
+      in: query
+      required: false
+      description: embed 'pairingDetails' is only supported along with 'devices' or 'equipment' embeds
+      schema:
+        type: string
+        enum:
+          - devices
+          - equipment
+          - pairingDetails
+          - icon
+          - offsets
+          - capabilities
+    Categories:
+      name: categories
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+        enum:
+          - Machine
+          - Implement
+        example: [Machine, Implement | Machine | Implement]
+    CapableOf:
+      name: capableOf
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - Connectivity
+          - "!Connectivity"
+    Role:
+      name: organizationRole.type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - Controlling
+          - NonControlling
+    Archived:
+      name: archived
+      in: query
+      required: false
+      schema:
+        type: boolean
+    SerialNumber:
+      name: serialNumber
+      in: path
+      required: true
+      schema:
+        type: string
+      example: VIN1234

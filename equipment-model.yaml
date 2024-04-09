@@ -1,0 +1,24 @@
+type: object
+title: EquipmentModel
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      name:
+        type: string
+        example: 8360R
+      ERID:
+        type: string
+        example: 158df9ff-334a-4e0d-86cc-3adca17a9686
+      category:
+        type: string
+        enum: [ Machine, Implement, Unknown ]
+      deprecated:
+        type: boolean
+        example: false
+      make:
+        $ref: './equipment-make.yaml'
+      type:
+        $ref: './equipment-type.yaml'
+      icon:
+        $ref: './equipment-icon.yaml'
