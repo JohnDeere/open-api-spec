@@ -217,10 +217,10 @@ paths:
         403:
           description: User is not authorized
   
-  /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentISGTypeId}/equipmentModels:
+  /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentTypeId}/equipmentModels:
     parameters:
       - $ref: '#/components/parameters/EquipmentMakeId'
-      - $ref: '#/components/parameters/EquipmentISGTypeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
     get:
         tags:
             - Equipment Model Resource
@@ -253,10 +253,8 @@ paths:
         - This operation retrieves a list of Equipment Models based on the supplied query parameters.
       operationId: getEquipmentModels
       parameters:
-        - $ref: "#/components/parameters/originator"
         - $ref: "#/components/parameters/category"
         - $ref: "#/components/parameters/deprecated"
-        - $ref: "#/components/parameters/organizationIds"
         - $ref: "#/components/parameters/embed"
         - $ref: "#/components/parameters/pageOffset"
         - $ref: "#/components/parameters/itemLimit"
@@ -287,6 +285,37 @@ components:
         type: integer
         format: int32
         example: 1111
+    EquipmentTypeId:
+      name: equipmentTypeId
+      in: path
+      required: true
+      description: ID for Equipment Type
+      schema:
+        type: integer
+        format: int32
+        example: 2222
+    EquipmentModelId:
+      name: equipmentModelId
+      in: path
+      required: true
+      description: ID for Equipment Model
+      schema:
+        type: integer
+        format: int32
+        example: 3333
+    category:
+      name: category
+      in: query
+      required: false
+      description: List of type categories for the Equipment Model
+      schema:
+        type: array
+        items:
+          type: string
+        example: ["machine", "implement"]
+        enum:
+          - machine
+          - implement
     deprecated:
       name: deprecated
       in: query
@@ -300,6 +329,25 @@ components:
           - all
         example: false
         default: all
+    pageOffset:
+      name: pageOffset
+      in: query
+      required: false
+      description: the record to start the results on
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    itemLimit:
+      name: itemLimit
+      in: query
+      required: false
+      description: the number of records to return
+      schema:
+        type: integer
+        format: int32
+        default: 100
+        maximum: 5000
     embed:
       name: embed
       in: query
