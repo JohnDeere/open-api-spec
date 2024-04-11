@@ -17,7 +17,6 @@ paths:
         - Equipment Make Resource
       description: |
         - Retrieves Equipment Makes with embed
-        - This endpoint has 2-legged access only.
       operationId: getEquipmentMakes
       parameters:
         - $ref: "#/components/parameters/originator"
@@ -39,7 +38,7 @@ paths:
                     items:
                       $ref: './schemas_v31/equipment-make.yaml'
         403:
-          description: User is not two-legged authorized
+          description: User is not authorized
   /equipmentMakes/{equipmentMakeId}:
     get:
       tags:
@@ -66,7 +65,7 @@ paths:
                     items:
                       $ref: './equipment-make.yaml'
         403:
-          description: User is not two-legged authorized
+          description: User is not authorized
         404:
           description: Resource Not foundapi-makes
   /equipmentMakes/{makeId}/equipmentTypes:
@@ -166,7 +165,7 @@ paths:
                 schema:
                   $ref: './../shared/schemas/Errors.yaml/#/components/schemas/Errors'
           403:
-            description: User is not two-legged authorized
+            description: User is not authorized
 
   /organizations/{organizationId}/equipmentModels/{equipmentModelId}:
     parameters:
@@ -194,7 +193,7 @@ paths:
               schema:
                 $ref: './errors.yaml'
         403:
-          description: User is not two-legged authorized
+          description: User is not authorized
 
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
     parameters:
@@ -222,7 +221,7 @@ paths:
                       items:
                         $ref: './schemas_v31/equipment-model.yaml'
           403:
-            description: User is not two-legged authorized
+            description: User is not authorized
 
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels/{equipmentModelId}:
     parameters:
@@ -243,7 +242,7 @@ paths:
               schema:
                 $ref: './schemas_v31/equipment-model.yaml'
         403:
-          description: User is not two-legged authorized
+          description: User is not authorized
 
   /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentISGTypeId}/equipmentModels:
     parameters:
@@ -271,7 +270,7 @@ paths:
                         items:
                           $ref: './equipment-model.yaml'
             403:
-              description: User is not two-legged authorized
+              description: User is not authorized
 
   /equipmentModels:
     get:
