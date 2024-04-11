@@ -42,7 +42,6 @@ paths:
         - $ref: '#/components/parameters/Role'
         - $ref: '#/components/parameters/Archived'
         - $ref: '#/components/parameters/EmbedForList'
-        - $ref: '#/components/parameters/Originator'
         - $ref: '#/components/parameters/PageOffset'
         - $ref: '#/components/parameters/ItemLimit'
       responses:
@@ -247,6 +246,7 @@ paths:
                 $ref: '#/components/schemas/Errors'
         403:
           description: User is not authorized for this request.
+
 
 components:
   schemas:

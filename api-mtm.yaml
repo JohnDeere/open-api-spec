@@ -141,33 +141,6 @@ paths:
                     type: array
                     items:
                       $ref: "./equipment-type.yaml"
-  /organizations/{organizationId}/equipmentModels:
-    parameters:
-      - $ref: '#/components/parameters/OrganizationId'
-    post:
-        tags:
-            - Equipment Model Resource
-        description: |
-          - This operation creates a new custom Equipment Model.
-        operationId: createEquipmentModel
-        requestBody:
-            content:
-              application/json:
-                schema:
-                  $ref: './schemas_v31/equipment-model.yaml'
-        responses:
-          201:
-            description: Created
-          400:
-            description: Bad Request
-            content:
-              application/json:
-                schema:
-                  $ref: './../shared/schemas/Errors.yaml/#/components/schemas/Errors'
-          403:
-            description: User is not authorized
-
-  /organizations/{organizationId}/equipmentModels/{equipmentModelId}:
     parameters:
       - $ref: '#/components/parameters/OrganizationId'
       - $ref: '#/components/parameters/EquipmentModelId'
@@ -194,7 +167,6 @@ paths:
                 $ref: './errors.yaml'
         403:
           description: User is not authorized
-
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
     parameters:
       - $ref: '#/components/parameters/EquipmentMakeId'
@@ -222,7 +194,6 @@ paths:
                         $ref: './schemas_v31/equipment-model.yaml'
           403:
             description: User is not authorized
-
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels/{equipmentModelId}:
     parameters:
       - $ref: '#/components/parameters/EquipmentMakeId'
@@ -243,7 +214,6 @@ paths:
                 $ref: './schemas_v31/equipment-model.yaml'
         403:
           description: User is not authorized
-
   /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentISGTypeId}/equipmentModels:
     parameters:
       - $ref: '#/components/parameters/EquipmentMakeId'
@@ -271,7 +241,6 @@ paths:
                           $ref: './equipment-model.yaml'
             403:
               description: User is not authorized
-
   /equipmentModels:
     get:
       tags:
