@@ -32,11 +32,11 @@ paths:
                   links:
                     type: array
                     items:
-                      $ref: "../shared/schemas_v31/link.yaml"
+                      $ref: "./link.yaml"
                   values:
                     type: array
                     items:
-                      $ref: './schemas_v31/equipment-make.yaml'
+                      $ref: './equipment-make.yaml'
         403:
           description: User is not authorized
   /equipmentMakes/{equipmentMakeId}:
@@ -89,11 +89,11 @@ paths:
                   links:
                     type: array
                     items:
-                      $ref: "../shared/schemas_v31/link.yaml"
+                      $ref: "./link.yaml"
                   values:
                     type: array
                     items:
-                      $ref: './schemas_v31/equipment-type.yaml'
+                      $ref: './equipment-type.yaml'
   /equipmentMakes/{makeId}/equipmentTypes/{equipmentTypeId}:
     get:
       tags:
@@ -111,7 +111,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schemas_v31/equipment-type.yaml"
+                $ref: "./equipment-type.yaml"
         404:
           description: Resource Not Found.
   /equipmentTypes:
@@ -155,7 +155,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas_v31/equipment-model.yaml'
+              $ref: './equipment-model.yaml'
       responses:
         204:
           description: No Content
@@ -187,11 +187,11 @@ paths:
                     links:
                       type: array
                       items:
-                        $ref: '../shared/schemas_v31/link.yaml'
+                        $ref: './link.yaml'
                     values:
                       type: array
                       items:
-                        $ref: './schemas_v31/equipment-model.yaml'
+                        $ref: './equipment-model.yaml'
           403:
             description: User is not authorized
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels/{equipmentModelId}:
@@ -211,7 +211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas_v31/equipment-model.yaml'
+                $ref: './equipment-model.yaml'
         403:
           description: User is not authorized
   /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentISGTypeId}/equipmentModels:
