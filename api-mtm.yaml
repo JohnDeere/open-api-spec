@@ -141,7 +141,6 @@ paths:
                     items:
                       $ref: "./equipment-type.yaml"
 
-  
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
     parameters:
       - $ref: '#/components/parameters/EquipmentMakeId'
@@ -189,34 +188,6 @@ paths:
                 $ref: './equipment-model.yaml'
         403:
           description: User is not authorized
-  
-  /equipmentMakes/{equipmentMakeId}/equipmentISGTypes/{equipmentTypeId}/equipmentModels:
-    parameters:
-      - $ref: '#/components/parameters/EquipmentMakeId'
-      - $ref: '#/components/parameters/EquipmentTypeId'
-    get:
-        tags:
-            - Equipment Model Resource
-        description: |
-          - This operation retrieves a list of Equipment Models based on given makeId and ISGtypeId.
-        operationId: getEquipmentModelsByMakeIdAndISGTypeId
-        responses:
-            200:
-              description: OK
-              content:
-                application/json:
-                  schema:
-                    properties:
-                      links:
-                        type: array
-                        items:
-                          $ref: './link.yaml'
-                      values:
-                        type: array
-                        items:
-                          $ref: './equipment-model.yaml'
-            403:
-              description: User is not authorized
   
   /equipmentModels:
     get:
@@ -346,8 +317,7 @@ components:
         type: array
         items:
           type: string
-        example: ["equipmentType", "equipmentISGType"]
+        example: ["equipmentType"]
         enum:
           - equipmentType
-          - equipmentISGType
 
