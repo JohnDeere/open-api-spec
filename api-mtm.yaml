@@ -1,4 +1,4 @@
-equipment-make-openapi: 3.0.3
+openapi: 3.0.3
 info:
   title: Equipment Make API
   description: This API has all the operations for Equipment Make resources.
@@ -15,7 +15,6 @@ paths:
         - Retrieves Equipment Makes with embed
       operationId: getEquipmentMakes
       parameters:
-        - $ref: "#/components/parameters/originator"
         - $ref: "#/components/parameters/deprecated"
         - $ref: "#/components/parameters/embed"
       responses:
@@ -66,7 +65,7 @@ paths:
         404:
           description: Resource Not foundapi-makes
   
-  /equipmentMakes/{makeId}/equipmentTypes:
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes:
     get:
       tags:
         - Equipment Type Resource
@@ -75,7 +74,7 @@ paths:
       operationId: getEquipmentTypesByMakeId
       parameters:
 
-        - $ref: '#/components/parameters/MakeId'
+        - $ref: '#/components/parameters/EquipmentMakeId'
         - $ref: '#/components/parameters/deprecated'
       responses:
         200:
@@ -93,7 +92,7 @@ paths:
                     items:
                       $ref: './equipment-type.yaml'
   
-  /equipmentMakes/{makeId}/equipmentTypes/{equipmentTypeId}:
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}:
     get:
       tags:
         - Equipment Type Resource
@@ -101,8 +100,8 @@ paths:
         - Retrieve Equipment Type by Make Id and Type Id. 
       operationId: getEquipmentType
       parameters:
-        - $ref: '#/components/parameters/MakeId'
-        - $ref: '#/components/parameters/TypeId'
+        - $ref: '#/components/parameters/EquipmentMakeId'
+        - $ref: '#/components/parameters/EquipmentTypeId'
         - $ref: '#/components/parameters/embed'
       responses:
         200:
@@ -141,32 +140,7 @@ paths:
                     type: array
                     items:
                       $ref: "./equipment-type.yaml"
-    parameters:
-      - $ref: '#/components/parameters/OrganizationId'
-      - $ref: '#/components/parameters/EquipmentModelId'
-    delete:
-      tags:
-        - Equipment Model Resource
-      description: |
-        - This operation deletes custom Equipment Model.
-        - This endpoint has 2-legged access only.
-      operationId: deleteEquipmentModel
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './equipment-model.yaml'
-      responses:
-        204:
-          description: No Content
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: './errors.yaml'
-        403:
-          description: User is not authorized
+
   
   /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
     parameters:
@@ -206,7 +180,6 @@ paths:
         - Equipment Model Resource
       description: |
         - This operation retrieves a single Equipment Model based on given makeId, typeId and modelId.
-      operationId: getEquipmentModelsByMakeIdAndTypeId
       responses:
         200:
           description: OK
@@ -316,6 +289,22 @@ components:
         enum:
           - machine
           - implement
+    EquipmentTypeName:
+      name: equipmentTypeName
+      in: query
+      required: false
+      description: Name for Equipment Type
+      schema:
+        type: string
+        example: "8285R"
+    EquipmentMakeName:
+      name: equipmentTypeId
+      in: query
+      required: false
+      description: Name for Equipment Make
+      schema:
+        type: string
+        example: "JOHN DEERE"
     deprecated:
       name: deprecated
       in: query
