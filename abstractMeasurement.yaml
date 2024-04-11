@@ -1,0 +1,7 @@
+type: object
+title: AbstractMeasurement
+properties:
+  type:
+    type: string
+  unit:
+    type: string

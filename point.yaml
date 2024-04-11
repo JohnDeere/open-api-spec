@@ -1,0 +1,12 @@
+type: object
+title: Point
+properties:
+  lat:
+    type: number
+    format: double
+  lon:
+    type: number
+    format: double
+  slope:
+    type: number
+    format: double

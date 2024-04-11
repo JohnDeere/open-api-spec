@@ -1,0 +1,14 @@
+type: object
+title: Offsets
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      variableRepresentationValues:
+        type: array
+        items:
+          $ref: './variableRepresentationValue.yaml'
+      definedTypeRepresentationValues:
+        type: array
+        items:
+          $ref: './definedTypeRepresentationValue.yaml'

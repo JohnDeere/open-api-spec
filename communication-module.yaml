@@ -1,0 +1,52 @@
+type: object
+title: CommunicationModule
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      serialNumber:
+        type: string
+        description: Serial number of the communication gateway
+        example: PCS171B372381
+      imei:
+        type: string
+      imsi:
+        type: string
+      iccid:
+        type: string
+      msisdn:
+        type: string
+      eid:
+        type: string
+      type:
+        type: string
+        enum:
+          - GSM
+          - SATELLITE
+          - CDMA
+          - COS
+      serviceProvider:
+        type: string
+        enum:
+          - IRIDIUM
+          - ATT
+          - JASPER
+          - VERIZON
+          - COS
+          - COST
+          - CUBIC
+          - ATTIOT
+      state:
+        type: string
+        description: Subscription state of the communication gateway
+        enum:
+          - NEW
+          - ACTIVE
+          - INACTIVE
+          - EXPIRED
+          - PENDING_ACTIVE
+          - PENDING_INACTIVE
+          - PENDING_EXPIRED
+          - PENDING_VERIFICATION
+          - PENDING_WDT
+          - TERMINATED

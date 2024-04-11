@@ -1,0 +1,26 @@
+type: object
+title: TelematicsGateway
+allOf:
+  - $ref: './device.yaml'
+  - type: object
+    properties:
+      pairingStatus:
+        schema:
+          type: string
+          enum:
+            - PAIRED
+            - PENDING_PAIRING
+      orderNumber:
+        type: string
+      highFidelityConfigurationVersion:
+        $ref: './version.yaml'
+      genericConfigurationVersion:
+        $ref: './version.yaml'
+      decommissioned:
+        type: boolean
+      stolen:
+        type: boolean
+      communicationModules:
+        type: array
+        items:
+          $ref: './communication-module.yaml'

@@ -55,7 +55,7 @@ paths:
                     type: array
                     items:
                       anyOf:
-                        - $ref: '#components/schemas/impliment.yaml'
+                        - $ref: 'implement.yaml'
                         - $ref: 'machine.yaml'
         400:
           description: Bad Request - No query parameters provided.

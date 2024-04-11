@@ -1,0 +1,5 @@
+type: object
+title: PositionReceiver
+allOf:
+  - $ref: './device.yaml'
+  - type: object

@@ -1,0 +1,16 @@
+type: object
+title: PairingDetails
+properties:
+  paired:
+    type: boolean
+  associationTimestamp:
+    type: string
+    format: date-time
+  disassociationTimestamp:
+    type: string
+    format: date-time
+  confirmationTimestamp:
+    type: string
+    format: date-time
+  location:
+    $ref: './point.yaml'

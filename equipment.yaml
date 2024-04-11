@@ -21,12 +21,10 @@ allOf:
         $ref: './equipment-make.yaml'
       type:
         $ref: './equipment-type.yaml'
-      isgType:
-        $ref: './equipment-isg-type.yaml'
       model:
         $ref: './equipment-model.yaml'
       organization:
-        $ref: '../../shared/schemas_v31/resource.yaml'
+        $ref: './resource.yaml'
       archived:
         type: boolean
         example: true
