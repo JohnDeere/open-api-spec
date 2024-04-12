@@ -247,6 +247,218 @@ paths:
         403:
           description: User is not authorized for this request.
 
+  /equipmentMakes:
+    get:
+      tags:
+        - Equipment Make Resource
+      description: |
+        - Retrieves Equipment Makes with embed
+      operationId: getEquipmentMakes
+      parameters:
+        - $ref: "#/components/parameters/deprecated"
+        - $ref: "#/components/parameters/Embed"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './equipment-make.yaml'
+        403:
+          description: User is not authorized
+  
+  /equipmentMakes/{equipmentMakeId}:
+    get:
+      tags:
+        - Equipment Make Resource
+      description: |
+        - Retrieve Equipment Make by Id with embed
+      operationId: getEquipmentMakesById
+      parameters:
+        - $ref: "#/components/parameters/EquipmentMakeId"
+        - $ref: "#/components/parameters/Embed"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './equipment-make.yaml'
+        403:
+          description: User is not authorized
+        404:
+          description: Resource Not foundapi-makes
+  
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - This operation retrieves a list of Equipment Types by makeId supplied query parameters.
+      operationId: getEquipmentTypesByMakeId
+      parameters:
+
+        - $ref: '#/components/parameters/EquipmentMakeId'
+        - $ref: '#/components/parameters/deprecated'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './equipment-type.yaml'
+  
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - Retrieve Equipment Type by Make Id and Type Id. 
+      operationId: getEquipmentType
+      parameters:
+        - $ref: '#/components/parameters/EquipmentMakeId'
+        - $ref: '#/components/parameters/EquipmentTypeId'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./equipment-type.yaml"
+        404:
+          description: Resource Not Found.
+  
+  /equipmentTypes:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - Retrieve all Equipment Types with embed.
+      operationId: getEquipmentTypes
+      parameters:
+        - $ref: "#/components/parameters/EquipmentTypeName"
+        - $ref: "#/components/parameters/EquipmentMakeName"
+        - $ref: "#/components/parameters/deprecated"
+        - $ref: "#/components/parameters/Embed"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: "./equipment-type.yaml"
+
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
+    get:
+        tags:
+            - Equipment Model Resource
+        description: |
+          - This operation retrieves a list of Equipment Models based on makeId and typeId.
+        operationId: getEquipmentModelsByMakeIdAndTypeId
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  properties:
+                    links:
+                      type: array
+                      items:
+                        $ref: './link.yaml'
+                    values:
+                      type: array
+                      items:
+                        $ref: './equipment-model.yaml'
+          403:
+            description: User is not authorized
+  
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels/{equipmentModelId}:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
+      - $ref: '#/components/parameters/EquipmentModelId'
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a single Equipment Model based on given makeId, typeId and modelId.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './equipment-model.yaml'
+        403:
+          description: User is not authorized
+  
+  /equipmentModels:
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a list of Equipment Models based on the supplied query parameters.
+      operationId: getEquipmentModels
+      parameters:
+        - $ref: "#/components/parameters/category"
+        - $ref: "#/components/parameters/deprecated"
+        - $ref: "#/components/parameters/Embed"
+        - $ref: "#/components/parameters/PageOffset"
+        - $ref: "#/components/parameters/ItemLimit"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: "./link.yaml"
+                  values:
+                    type: array
+                    items:
+                      $ref: './equipment-model.yaml'
+
+
 
 components:
   schemas:
@@ -430,3 +642,73 @@ components:
       schema:
         type: string
       example: VIN1234
+    EquipmentMakeId:
+      name: equipmentMakeId
+      in: path
+      required: true
+      description: ID for Equipment Make
+      schema:
+        type: integer
+        format: int32
+        example: 1111
+    EquipmentTypeId:
+      name: equipmentTypeId
+      in: path
+      required: true
+      description: ID for Equipment Type
+      schema:
+        type: integer
+        format: int32
+        example: 2222
+    EquipmentModelId:
+      name: equipmentModelId
+      in: path
+      required: true
+      description: ID for Equipment Model
+      schema:
+        type: integer
+        format: int32
+        example: 3333
+    category:
+      name: category
+      in: query
+      required: false
+      description: List of type categories for the Equipment Model
+      schema:
+        type: array
+        items:
+          type: string
+        example: ["machine", "implement"]
+        enum:
+          - machine
+          - implement
+    EquipmentTypeName:
+      name: equipmentTypeName
+      in: query
+      required: false
+      description: Name for Equipment Type
+      schema:
+        type: string
+        example: "8285R"
+    EquipmentMakeName:
+      name: equipmentTypeId
+      in: query
+      required: false
+      description: Name for Equipment Make
+      schema:
+        type: string
+        example: "JOHN DEERE"
+    deprecated:
+      name: deprecated
+      in: query
+      required: false
+      description: Whether to filter makes by the deprecated flag
+      schema:
+        type: string
+        enum:
+          - false
+          - true
+          - all
+        example: false
+        default: all
+
