@@ -1,0 +1,13 @@
+type: object
+title: MeasurementAsDouble
+allOf:
+  - $ref: './abstractMeasurement.yaml'
+  - type: object
+    properties:
+      type:
+        type: string
+      unit:
+        type: string
+      valueAsDouble:
+        type: number
+        format: double

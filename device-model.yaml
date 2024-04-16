@@ -1,0 +1,12 @@
+type: object
+title: DeviceModel
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      name:
+        type: string
+        example: JDLink Modem-4G
+      ERID:
+        type: string
+        example: db18bdc4-025a-11eb-97e4-0e8d658c7ba3

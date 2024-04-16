@@ -1,0 +1,22 @@
+openapi: "3.0.0"
+info:
+  title: Schema for HATEOAS Link between Axiom resources
+  contact:
+    name: Jim Pace
+    email: 'PaceJamesR@JohnDeere.com'
+
+components:
+  schemas:
+    Link:
+      description: Link to another resource
+      type: object
+      required:
+        - rel
+        - uri
+      properties:
+        rel:
+          type: string
+          example: self
+        uri:
+          type: string
+          example: https://apidev.tal.deere.com/platform/users/grumpybear

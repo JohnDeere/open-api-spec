@@ -1,0 +1,21 @@
+type: object
+title: OrganizationRole
+properties:
+  type:
+    type: string
+    enum:
+      - Controlling
+      - NonControlling
+  effectiveTS:
+    type: string
+    format: date-time
+  event:
+    type: string
+    enum:
+      - CREATION
+      - TRANSFER
+      - SUBSCRIPTION
+      - PAIRING
+      - ORDER
+      - COMMANDED
+      - DECOMMISSION

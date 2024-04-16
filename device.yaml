@@ -1,0 +1,43 @@
+type: object
+title: Device
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      serialNumber:
+        type: string
+        description: Serial number of the device and passed on the query parameter
+        example: PCS171B372381
+      make:
+        $ref: './device-make.yaml'
+      type:
+        $ref: './device-type.yaml'
+      model:
+        $ref: './device-model.yaml'
+      organization:
+        $ref: './resource.yaml'
+      ERID:
+        type: string
+        description: |
+          Unique identifier of the Device.
+        example: fcdc83cb-8840-4215-84b5-1769889db932
+      firmwareVersion:
+        $ref: './version.yaml'
+      capabilities:
+        type: array
+        items:
+          $ref: './capability.yaml'
+      equipment:
+        $ref: './equipment.yaml'
+      archived:
+        type: boolean
+        example: true
+      principalId:
+        type: string
+        description: Unique id for principal device
+      organizationRole:
+        $ref: './organization-role.yaml'
+      orderNumber:
+        type: string
+      pairingDetails:
+        $ref: './pairing-details.yaml'

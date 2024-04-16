@@ -1,0 +1,9 @@
+type: object
+title: Version
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      name:
+        type: string
+        example: 3.16.1171

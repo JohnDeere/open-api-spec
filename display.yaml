@@ -1,0 +1,6 @@
+type: object
+title: Display
+allOf:
+  - $ref: './device.yaml'
+  - type: object
+

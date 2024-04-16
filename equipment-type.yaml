@@ -1,0 +1,24 @@
+type: object
+title: EquipmentType
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      name:
+        type: string
+        example: Two-wheel Drive Tractors - 140 Hp And Above
+      ERID:
+        type: string
+        example: 82115264-9385-460c-bfbe-177a59445fd9
+      category:
+        type: string
+        enum: [Machine, Implement, Unknown]
+      certified:
+        type: boolean
+        example: true
+      icon:
+        type: string
+        example: icon
+      deprecated:
+        type: boolean
+        example: false

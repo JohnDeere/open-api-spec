@@ -1,0 +1,12 @@
+type: object
+title: Capability
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      capable:
+        type: boolean
+      capabilityDetails:
+        type: array
+        items:
+          $ref: './inability-detail.yaml'

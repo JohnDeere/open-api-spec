@@ -1,0 +1,22 @@
+type: object
+title: PatchDTO
+properties:
+  operation:
+    type: string
+    enum:
+      - UPDATE
+  path:
+    type: string
+    enum:
+      - /organization
+      - /archived
+      - /organizationRole/type
+      - /name
+  value:
+    type: string
+    description: |
+      - For transfer request : value={organizationId} 
+      - For archive/unarchive request : value=true/false
+      - For role update request : value={Controlling}
+      - For name update request : value={name}
+

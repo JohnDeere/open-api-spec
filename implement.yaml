@@ -1,0 +1,8 @@
+type: object
+title: Implement
+allOf:
+  - $ref: './equipment.yaml'
+  - type: object
+    properties:
+      machine:
+        $ref: './machine.yaml'

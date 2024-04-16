@@ -1,0 +1,19 @@
+required:
+  - '@type'
+type: object
+title: Resource
+properties:
+  links:
+    type: array
+    items:
+      $ref: './link.yaml'
+  id:
+    type: string
+    description: Unique id
+    example: 363997 | fcdc83cb-8840-4215-84b5-1769889db932
+  '@type':
+    type: string
+    description: Equipment | Machine | Implement | EquipmentType | EquipmentMake | EquipmentModel | Organization | TheftRecord | DecommissionRecord | WarrantyInformation | DeviceParameter | Other
+    example: Equipment | Machine | Implement | EquipmentType | EquipmentMake | EquipmentModel | Organization | TheftRecord | DecommissionRecord | WarrantyInformation | DeviceParameter | Other
+discriminator:
+  propertyName: '@type'

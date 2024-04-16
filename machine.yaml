@@ -1,0 +1,11 @@
+type: object
+title: Machine
+allOf:
+  - $ref: './equipment.yaml'
+  - type: object
+    properties:
+      implements:
+        uniqueItems: true
+        type: array
+        items:
+          $ref: './implement.yaml'

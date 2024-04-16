@@ -1,0 +1,12 @@
+type: object
+title: MeasurementAsString
+allOf:
+  - $ref: './abstractMeasurement.yaml'
+  - type: object
+    properties:
+      type:
+        type: string
+      unit:
+        type: string
+      valueAsString:
+        type: string

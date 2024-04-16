@@ -1,0 +1,15 @@
+type: object
+title: InabilityDetail
+allOf:
+  - $ref: './resource.yaml'
+  - type: object
+    properties:
+      code:
+        type: string
+        example: RC14.8.1
+      type:
+        type: string
+        example: REGISTRATION
+      description:
+        type: string
+        example: SIM registration is required
