@@ -1,0 +1,1178 @@
+openapi: 3.0.3
+info:
+  title: Equipment Management API
+  description: This API has all the operations for equipment resource.
+  version: '2.0'
+servers:
+  - url: https://equipmentapi.deere.com/isg
+tags:
+  - name: Equipment Resource
+    description: |
+      This resource provides the ability to retrieve equipment information
+      based on the supplied query parameters.
+paths:
+  /equipment:
+    get:
+      tags:
+        - Equipment Resource
+      description: |
+        - Retrieve all Equipment by either of the following query parameters - 
+          1. Primary filters:
+             - OrganizationEquipment id(s)
+             - Organization id(s) 
+             - SerialNumber(s) and/or OrganizationId(s)
+             - Principal id(s) and/or OrganizationId(s)
+          2. Supported secondary filters
+              - categories
+              - capableOf
+              - organizationRole.type
+              - archived
+          3. Other parameter(s)
+              - embed
+        - If none of the primary parameters/filters are supplied in the request 
+              - Should return all the equipment from the organizations that user has access to.
+              - Should return 403, when user does has access to any organization.
+      parameters:
+        - $ref: '#/components/parameters/OrganizationEquipmentIds'
+        - $ref: '#/components/parameters/EquipmentSerialNumbers'
+        - $ref: '#/components/parameters/OrganizationIds'
+        - $ref: '#/components/parameters/PrincipalIds'
+        - $ref: '#/components/parameters/CapableOf'
+        - $ref: '#/components/parameters/Categories'
+        - $ref: '#/components/parameters/Role'
+        - $ref: '#/components/parameters/Archived'
+        - $ref: '#/components/parameters/EmbedForList'
+        - $ref: '#/components/parameters/PageOffset'
+        - $ref: '#/components/parameters/ItemLimit'
+      responses:
+        '200':
+          description: Equipment(s) found based on the query parameters and filters.
+          content:
+            application/json:
+              schema:
+                properties:
+                  values:
+                    type: array
+                    items:
+                      anyOf:
+                        - $ref: '#/components/schemas/implement'
+                        - $ref: '#/components/schemas/machine'
+        '400':
+          description: Bad Request - No query parameters provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '403':
+          description: |
+            Authorization Error 
+            - user/applications does not have access to api or resource
+            or 
+            - user does not have required permissions/BusinessActivities for the org.
+  /organizations/{organizationId}/equipment:
+    post:
+      tags:
+        - Equipment Resource
+      description: |
+        - Create Equipment in requested organization.
+      operationId: createEquipment
+      parameters:
+        - $ref: '#/components/parameters/organizationId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/machine'
+                - $ref: '#/components/schemas/implement'
+        required: true
+      responses:
+        '201':
+          description: Created
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '403':
+          description: User is not authorized for this request.
+  /equipment/{id}:
+    get:
+      tags:
+        - Equipment Resource
+      description: |
+        - Get Equipment by OrganizationEquipment ID. 
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        '200':
+          description: Equipment found by Id or Serial Number
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/machine'
+                  - $ref: '#/components/schemas/implement'
+        '403':
+          description: |
+            Authorization Error 
+            - user/applications does not have access to api or resource
+            or 
+            - user does not have required permissions/BusinessActivities for the org.
+        '404':
+          description: Equipment not found
+    put:
+      tags:
+        - Equipment Resource
+      description: |
+        - Update Equipment by OrganizationEquipment Id.
+      operationId: putEquipment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/equipment'
+      responses:
+        '200':
+          description: Patch Successful
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '403':
+          description: User is not authorized for this request.
+    delete:
+      tags:
+        - Equipment Resource
+      description: |
+        - Delete OrganizationEquipment by OrganizationEquipment Id.
+      operationId: deleteEquipment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '403':
+          description: User is not authorized for this request.
+  /equipmentMakes:
+    get:
+      tags:
+        - Equipment Make Resource
+      description: |
+        - Retrieves Equipment Makes with embed
+      operationId: getEquipmentMakes
+      parameters:
+        - $ref: '#/components/parameters/deprecated'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/equipment-make'
+        '403':
+          description: User is not authorized
+  /equipmentMakes/{equipmentMakeId}:
+    get:
+      tags:
+        - Equipment Make Resource
+      description: |
+        - Retrieve Equipment Make by Id with embed
+      operationId: getEquipmentMakesById
+      parameters:
+        - $ref: '#/components/parameters/EquipmentMakeId'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/equipment-make'
+        '403':
+          description: User is not authorized
+        '404':
+          description: Resource Not foundapi-makes
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - This operation retrieves a list of Equipment Types by makeId supplied query parameters.
+      operationId: getEquipmentTypesByMakeId
+      parameters:
+        - $ref: '#/components/parameters/EquipmentMakeId'
+        - $ref: '#/components/parameters/deprecated'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/equipment-type'
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - Retrieve Equipment Type by Make Id and Type Id. 
+      operationId: getEquipmentType
+      parameters:
+        - $ref: '#/components/parameters/EquipmentMakeId'
+        - $ref: '#/components/parameters/EquipmentTypeId'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/equipment-type'
+        '404':
+          description: Resource Not Found.
+  /equipmentTypes:
+    get:
+      tags:
+        - Equipment Type Resource
+      description: |
+        - Retrieve all Equipment Types with embed.
+      operationId: getEquipmentTypes
+      parameters:
+        - $ref: '#/components/parameters/EquipmentTypeName'
+        - $ref: '#/components/parameters/EquipmentMakeName'
+        - $ref: '#/components/parameters/deprecated'
+        - $ref: '#/components/parameters/Embed'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/equipment-type'
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a list of Equipment Models based on makeId and typeId.
+      operationId: getEquipmentModelsByMakeIdAndTypeId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/equipment-model'
+        '403':
+          description: User is not authorized
+  /equipmentMakes/{equipmentMakeId}/equipmentTypes/{equipmentTypeId}/equipmentModels/{equipmentModelId}:
+    parameters:
+      - $ref: '#/components/parameters/EquipmentMakeId'
+      - $ref: '#/components/parameters/EquipmentTypeId'
+      - $ref: '#/components/parameters/EquipmentModelId'
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a single Equipment Model based on given makeId, typeId and modelId.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/equipment-model'
+        '403':
+          description: User is not authorized
+  /equipmentModels:
+    get:
+      tags:
+        - Equipment Model Resource
+      description: |
+        - This operation retrieves a list of Equipment Models based on the supplied query parameters.
+      operationId: getEquipmentModels
+      parameters:
+        - $ref: '#/components/parameters/category'
+        - $ref: '#/components/parameters/deprecated'
+        - $ref: '#/components/parameters/Embed'
+        - $ref: '#/components/parameters/PageOffset'
+        - $ref: '#/components/parameters/ItemLimit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                  values:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/equipment-model'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: An english description of the error
+          example: <parameter> was invalid because <reason>
+        code:
+          type: string
+          description: A string constant representing the type of error
+          example: 400
+        field:
+          type: string
+          description: The name of the property or parameter deemed invalid
+          example: Machine.serialNumber
+        gud:
+          type: string
+          format: uuid
+          description: A reference to this encounter of the error, for traceability and troubleshooting
+          example: 9b331708-10e8-4e15-8097-a9aed7455d6d
+        invalidValue:
+          type: string
+          description: The value that was supplied for this field in the request
+          example: null
+      readOnly: true
+    Errors:
+      type: array
+      items:
+        $ref: '#/components/schemas/Error'
+      readOnly: true
+    link:
+      openapi: 3.0.0
+      info:
+        title: Schema for HATEOAS Link between Axiom resources
+        contact:
+          name: Jim Pace
+          email: PaceJamesR@JohnDeere.com
+      components:
+        schemas:
+          Link:
+            description: Link to another resource
+            type: object
+            required:
+              - rel
+              - uri
+            properties:
+              rel:
+                type: string
+                example: self
+              uri:
+                type: string
+                example: https://apidev.tal.deere.com/platform/users/grumpybear
+    resource:
+      required:
+        - '@type'
+      type: object
+      title: Resource
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        id:
+          type: string
+          description: Unique id
+          example: 363997 | fcdc83cb-8840-4215-84b5-1769889db932
+        '@type':
+          type: string
+          description: Equipment | Machine | Implement | EquipmentType | EquipmentMake | EquipmentModel | Organization | TheftRecord | DecommissionRecord | WarrantyInformation | DeviceParameter | Other
+          example: Equipment | Machine | Implement | EquipmentType | EquipmentMake | EquipmentModel | Organization | TheftRecord | DecommissionRecord | WarrantyInformation | DeviceParameter | Other
+      discriminator:
+        propertyName: '@type'
+    equipment-make:
+      type: object
+      title: EquipmentMake
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: JOHN DEERE
+            ERID:
+              type: string
+              example: db18bdc4-025a-11eb-97e4-0e8d658c7ba3
+            deprecated:
+              type: boolean
+              example: false
+    equipment-type:
+      type: object
+      title: EquipmentType
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: Two-wheel Drive Tractors - 140 Hp And Above
+            ERID:
+              type: string
+              example: 82115264-9385-460c-bfbe-177a59445fd9
+            category:
+              type: string
+              enum:
+                - Machine
+                - Implement
+                - Unknown
+            certified:
+              type: boolean
+              example: true
+            icon:
+              type: string
+              example: icon
+            deprecated:
+              type: boolean
+              example: false
+    icon-style:
+      type: object
+      title: IconStyle
+      properties:
+        primaryColor:
+          type: string
+        secondaryColor:
+          type: string
+    equipment-icon:
+      type: object
+      title: EquipmentIcon
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: JOHN DEERE
+            iconStyle:
+              $ref: '#/components/schemas/icon-style'
+    equipment-model:
+      type: object
+      title: EquipmentModel
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: 8360R
+            ERID:
+              type: string
+              example: 158df9ff-334a-4e0d-86cc-3adca17a9686
+            category:
+              type: string
+              enum:
+                - Machine
+                - Implement
+                - Unknown
+            deprecated:
+              type: boolean
+              example: false
+            make:
+              $ref: '#/components/schemas/equipment-make'
+            type:
+              $ref: '#/components/schemas/equipment-type'
+            icon:
+              $ref: '#/components/schemas/equipment-icon'
+    organization-role:
+      type: object
+      title: OrganizationRole
+      properties:
+        type:
+          type: string
+          enum:
+            - Controlling
+            - NonControlling
+        effectiveTS:
+          type: string
+          format: date-time
+        event:
+          type: string
+          enum:
+            - CREATION
+            - TRANSFER
+            - SUBSCRIPTION
+            - PAIRING
+            - ORDER
+            - COMMANDED
+            - DECOMMISSION
+    abstractMeasurement:
+      type: object
+      title: AbstractMeasurement
+      properties:
+        type:
+          type: string
+        unit:
+          type: string
+    measurementAsDouble:
+      type: object
+      title: MeasurementAsDouble
+      allOf:
+        - $ref: '#/components/schemas/abstractMeasurement'
+        - type: object
+          properties:
+            type:
+              type: string
+            unit:
+              type: string
+            valueAsDouble:
+              type: number
+              format: double
+    variableRepresentationValue:
+      type: object
+      title: VariableRepresentationValue
+      properties:
+        variable:
+          $ref: '#/components/schemas/measurementAsDouble'
+    measurementAsString:
+      type: object
+      title: MeasurementAsString
+      allOf:
+        - $ref: '#/components/schemas/abstractMeasurement'
+        - type: object
+          properties:
+            type:
+              type: string
+            unit:
+              type: string
+            valueAsString:
+              type: string
+    definedTypeRepresentationValue:
+      type: object
+      title: DefinedTypeRepresentationValue
+      properties:
+        value:
+          $ref: '#/components/schemas/measurementAsString'
+    offsets:
+      type: object
+      title: Offsets
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            variableRepresentationValues:
+              type: array
+              items:
+                $ref: '#/components/schemas/variableRepresentationValue'
+            definedTypeRepresentationValues:
+              type: array
+              items:
+                $ref: '#/components/schemas/definedTypeRepresentationValue'
+    device-make:
+      type: object
+      title: DeviceMake
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: JOHN DEERE
+            ERID:
+              type: string
+              example: db18bdc4-025a-11eb-97e4-0e8d658c7ba3
+    device-type:
+      type: object
+      title: DeviceType
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: Modem
+            commonName:
+              type: string
+              example: TelematicsGateway
+            ERID:
+              type: string
+              example: db18bdc4-025a-11eb-97e4-0e8d658c7ba3
+    device-model:
+      type: object
+      title: DeviceModel
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: JDLink Modem-4G
+            ERID:
+              type: string
+              example: db18bdc4-025a-11eb-97e4-0e8d658c7ba3
+    version:
+      type: object
+      title: Version
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: 3.16.1171
+    inability-detail:
+      type: object
+      title: InabilityDetail
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            code:
+              type: string
+              example: RC14.8.1
+            type:
+              type: string
+              example: REGISTRATION
+            description:
+              type: string
+              example: SIM registration is required
+    capability:
+      type: object
+      title: Capability
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            capable:
+              type: boolean
+            capabilityDetails:
+              type: array
+              items:
+                $ref: '#/components/schemas/inability-detail'
+    equipment:
+      type: object
+      title: Equipment
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            name:
+              type: string
+              description: Equipment Name.
+              example: Cates 8360R 055358
+            serialNumber:
+              type: string
+              description: Serial Number of the Equipment and passed on the query parameter
+              example: 1RW8360RLCD055358
+            engineSerialNumber:
+              type: string
+            isSerialNumberCertified:
+              type: boolean
+              example: true
+            make:
+              $ref: '#/components/schemas/equipment-make'
+            type:
+              $ref: '#/components/schemas/equipment-type'
+            model:
+              $ref: '#/components/schemas/equipment-model'
+            organization:
+              $ref: '#/components/schemas/resource'
+            archived:
+              type: boolean
+              example: true
+            principalId:
+              type: string
+              description: Unique id for principal equipment
+            organizationRole:
+              $ref: '#/components/schemas/organization-role'
+            ERID:
+              type: string
+              description: |
+                Unique identifier of the Equipment.
+              example: fcdc83cb-8840-4215-84b5-1769889db932
+            icon:
+              $ref: '#/components/schemas/equipment-icon'
+            offsets:
+              $ref: '#/components/schemas/offsets'
+            devices:
+              items:
+                anyOf:
+                  - $ref: '#/components/schemas/display'
+                  - $ref: '#/components/schemas/position-receiver'
+                  - $ref: '#/components/schemas/telematics-gateway'
+            capabilities:
+              type: array
+              items:
+                $ref: '#/components/schemas/capability'
+            pairingDetails:
+              $ref: '#/components/schemas/pairing-details'
+    point:
+      type: object
+      title: Point
+      properties:
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+        slope:
+          type: number
+          format: double
+    pairing-details:
+      type: object
+      title: PairingDetails
+      properties:
+        paired:
+          type: boolean
+        associationTimestamp:
+          type: string
+          format: date-time
+        disassociationTimestamp:
+          type: string
+          format: date-time
+        confirmationTimestamp:
+          type: string
+          format: date-time
+        location:
+          $ref: '#/components/schemas/point'
+    device:
+      type: object
+      title: Device
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            serialNumber:
+              type: string
+              description: Serial number of the device and passed on the query parameter
+              example: PCS171B372381
+            make:
+              $ref: '#/components/schemas/device-make'
+            type:
+              $ref: '#/components/schemas/device-type'
+            model:
+              $ref: '#/components/schemas/device-model'
+            organization:
+              $ref: '#/components/schemas/resource'
+            ERID:
+              type: string
+              description: |
+                Unique identifier of the Device.
+              example: fcdc83cb-8840-4215-84b5-1769889db932
+            firmwareVersion:
+              $ref: '#/components/schemas/version'
+            capabilities:
+              type: array
+              items:
+                $ref: '#/components/schemas/capability'
+            equipment:
+              $ref: '#/components/schemas/equipment'
+            archived:
+              type: boolean
+              example: true
+            principalId:
+              type: string
+              description: Unique id for principal device
+            organizationRole:
+              $ref: '#/components/schemas/organization-role'
+            orderNumber:
+              type: string
+            pairingDetails:
+              $ref: '#/components/schemas/pairing-details'
+    display:
+      type: object
+      title: Display
+      allOf:
+        - $ref: '#/components/schemas/device'
+        - type: object
+    position-receiver:
+      type: object
+      title: PositionReceiver
+      allOf:
+        - $ref: '#/components/schemas/device'
+        - type: object
+    communication-module:
+      type: object
+      title: CommunicationModule
+      allOf:
+        - $ref: '#/components/schemas/resource'
+        - type: object
+          properties:
+            serialNumber:
+              type: string
+              description: Serial number of the communication gateway
+              example: PCS171B372381
+            imei:
+              type: string
+            imsi:
+              type: string
+            iccid:
+              type: string
+            msisdn:
+              type: string
+            eid:
+              type: string
+            type:
+              type: string
+              enum:
+                - GSM
+                - SATELLITE
+                - CDMA
+                - COS
+            serviceProvider:
+              type: string
+              enum:
+                - IRIDIUM
+                - ATT
+                - JASPER
+                - VERIZON
+                - COS
+                - COST
+                - CUBIC
+                - ATTIOT
+            state:
+              type: string
+              description: Subscription state of the communication gateway
+              enum:
+                - NEW
+                - ACTIVE
+                - INACTIVE
+                - EXPIRED
+                - PENDING_ACTIVE
+                - PENDING_INACTIVE
+                - PENDING_EXPIRED
+                - PENDING_VERIFICATION
+                - PENDING_WDT
+                - TERMINATED
+    telematics-gateway:
+      type: object
+      title: TelematicsGateway
+      allOf:
+        - $ref: '#/components/schemas/device'
+        - type: object
+          properties:
+            pairingStatus:
+              schema:
+                type: string
+                enum:
+                  - PAIRED
+                  - PENDING_PAIRING
+            orderNumber:
+              type: string
+            highFidelityConfigurationVersion:
+              $ref: '#/components/schemas/version'
+            genericConfigurationVersion:
+              $ref: '#/components/schemas/version'
+            decommissioned:
+              type: boolean
+            stolen:
+              type: boolean
+            communicationModules:
+              type: array
+              items:
+                $ref: '#/components/schemas/communication-module'
+    implement:
+      type: object
+      title: Implement
+      allOf:
+        - $ref: '#/components/schemas/equipment'
+        - type: object
+          properties:
+            machine:
+              $ref: '#/components/schemas/machine'
+    machine:
+      type: object
+      title: Machine
+      allOf:
+        - $ref: '#/components/schemas/equipment'
+        - type: object
+          properties:
+            implements:
+              uniqueItems: true
+              type: array
+              items:
+                $ref: '#/components/schemas/implement'
+  parameters:
+    OrganizationEquipmentIds:
+      name: ids
+      in: query
+      required: false
+      description: List of OrganizationEquipment Ids (these ids are unique across all orgs)
+      schema:
+        type: array
+        items:
+          type: integer
+        example:
+          - 1
+          - 2
+          - 3
+    EquipmentSerialNumbers:
+      name: serialNumbers
+      in: query
+      required: false
+      description: List of serial numbers of the equipment
+      schema:
+        type: array
+        items:
+          type: string
+        example:
+          - A01775E760247
+          - 1DW410ETHFF669067
+    OrganizationIds:
+      name: organizationIds
+      in: query
+      required: false
+      description: List of OrganizationIds
+      schema:
+        type: array
+        items:
+          type: integer
+        example:
+          - 1
+          - 2
+          - 3
+    PrincipalIds:
+      name: principalIds
+      in: query
+      required: false
+      description: List of PrincipalIds
+      schema:
+        type: array
+        items:
+          type: integer
+        example:
+          - 1
+          - 2
+          - 3
+    PageOffset:
+      name: pageOffset
+      in: query
+      required: false
+      description: Refers to the page number
+      schema:
+        type: integer
+        format: int32
+        default: 0
+      example: 1
+    ItemLimit:
+      name: itemLimit
+      in: query
+      required: false
+      description: Refers to number of items per page
+      schema:
+        type: integer
+        format: int32
+        default: 100
+        maximum: 5000
+      example: 10
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+      example: 1111
+    organizationId:
+      name: organizationId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+      example: 1234
+    EmbedForList:
+      name: embed
+      in: query
+      required: false
+      description: embed 'pairingDetails' is only supported along with 'devices' or 'equipment' embeds
+      schema:
+        type: string
+        enum:
+          - devices
+          - equipment
+          - icon
+          - pairingDetails
+    Embed:
+      name: embed
+      in: query
+      required: false
+      description: embed 'pairingDetails' is only supported along with 'devices' or 'equipment' embeds
+      schema:
+        type: string
+        enum:
+          - devices
+          - equipment
+          - pairingDetails
+          - icon
+          - offsets
+          - capabilities
+    Categories:
+      name: categories
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+        enum:
+          - Machine
+          - Implement
+        example:
+          - Machine
+          - Implement | Machine | Implement
+    CapableOf:
+      name: capableOf
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - Connectivity
+          - '!Connectivity'
+    Role:
+      name: organizationRole.type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - Controlling
+          - NonControlling
+    Archived:
+      name: archived
+      in: query
+      required: false
+      schema:
+        type: boolean
+    SerialNumber:
+      name: serialNumber
+      in: path
+      required: true
+      schema:
+        type: string
+      example: VIN1234
+    EquipmentMakeId:
+      name: equipmentMakeId
+      in: path
+      required: true
+      description: ID for Equipment Make
+      schema:
+        type: integer
+        format: int32
+        example: 1111
+    EquipmentTypeId:
+      name: equipmentTypeId
+      in: path
+      required: true
+      description: ID for Equipment Type
+      schema:
+        type: integer
+        format: int32
+        example: 2222
+    EquipmentModelId:
+      name: equipmentModelId
+      in: path
+      required: true
+      description: ID for Equipment Model
+      schema:
+        type: integer
+        format: int32
+        example: 3333
+    category:
+      name: category
+      in: query
+      required: false
+      description: List of type categories for the Equipment Model
+      schema:
+        type: array
+        items:
+          type: string
+        example:
+          - machine
+          - implement
+        enum:
+          - machine
+          - implement
+    EquipmentTypeName:
+      name: equipmentTypeName
+      in: query
+      required: false
+      description: Name for Equipment Type
+      schema:
+        type: string
+        example: 8285R
+    EquipmentMakeName:
+      name: equipmentTypeId
+      in: query
+      required: false
+      description: Name for Equipment Make
+      schema:
+        type: string
+        example: JOHN DEERE
+    deprecated:
+      name: deprecated
+      in: query
+      required: false
+      description: Whether to filter makes by the deprecated flag
+      schema:
+        type: string
+        enum:
+          - false
+          - true
+          - all
+        example: false
+        default: all
