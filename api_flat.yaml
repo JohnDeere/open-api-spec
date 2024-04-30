@@ -137,7 +137,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/equipment'
+              $ref: '#/components/schemas/equipment-patch'
       responses:
         '200':
           description: Patch Successful
@@ -175,9 +175,6 @@ paths:
       description: |
         - Retrieves Equipment Makes with embed
       operationId: getEquipmentMakes
-      parameters:
-        - $ref: '#/components/parameters/deprecated'
-        - $ref: '#/components/parameters/Embed'
       responses:
         '200':
           description: OK
@@ -233,7 +230,6 @@ paths:
       operationId: getEquipmentTypesByMakeId
       parameters:
         - $ref: '#/components/parameters/EquipmentMakeId'
-        - $ref: '#/components/parameters/deprecated'
       responses:
         '200':
           description: OK
@@ -279,8 +275,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/EquipmentTypeName'
         - $ref: '#/components/parameters/EquipmentMakeName'
-        - $ref: '#/components/parameters/deprecated'
-        - $ref: '#/components/parameters/Embed'
       responses:
         '200':
           description: OK
@@ -351,8 +345,6 @@ paths:
       operationId: getEquipmentModels
       parameters:
         - $ref: '#/components/parameters/category'
-        - $ref: '#/components/parameters/deprecated'
-        - $ref: '#/components/parameters/Embed'
         - $ref: '#/components/parameters/PageOffset'
         - $ref: '#/components/parameters/ItemLimit'
       responses:
@@ -945,6 +937,28 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/implement'
+    equipment-patch:
+      type: object
+      title: PatchDTO
+      properties:
+        operation:
+          type: string
+          enum:
+            - UPDATE
+        path:
+          type: string
+          enum:
+            - /organization
+            - /archived
+            - /organizationRole/type
+            - /name
+        value:
+          type: string
+          description: |
+            - For transfer request : value={organizationId} 
+            - For archive/unarchive request : value=true/false
+            - For role update request : value={Controlling}
+            - For name update request : value={name}
   parameters:
     OrganizationEquipmentIds:
       name: ids
@@ -1163,16 +1177,3 @@ components:
       schema:
         type: string
         example: JOHN DEERE
-    deprecated:
-      name: deprecated
-      in: query
-      required: false
-      description: Whether to filter makes by the deprecated flag
-      schema:
-        type: string
-        enum:
-          - false
-          - true
-          - all
-        example: false
-        default: all
