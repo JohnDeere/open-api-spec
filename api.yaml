@@ -69,50 +69,6 @@ paths:
             - user/applications does not have access to api or resource
             or 
             - user does not have required permissions/BusinessActivities for the org.
-    head:
-      tags:
-        - Equipment Resource
-      description: |
-        - Retrieve count of Equipment by either of the following query parameters - 
-            1. Primary filters:
-                - Organization id(s) 
-            2. Supported secondary filters
-                - categories
-                - capableOf
-                - organizationRole.type
-                - archived
-        - If none of the primary parameters/filters are supplied in the request 
-              - Should return all the equipment from the organizations that user has access to.
-              - Should return 403, when user does has access to any organization.
-        - Permissions: EQUIPMENT_1
-        - BusinessActivity: VIEW_EQUIPMENT_LIST_API
-      parameters:
-        - $ref: '#/components/parameters/OrganizationIds'
-        - $ref: '#/components/parameters/CapableOf'
-        - $ref: '#/components/parameters/Categories'
-        - $ref: '#/components/parameters/Role'
-        - $ref: '#/components/parameters/Archived'
-      responses:
-        200:
-          description: Equipment(s) found based on the query parameters and filters.
-          headers:
-            X-Deere-Count:
-              schema:
-                type: integer
-                format: int32
-                description: Total count of devices based on the query parameters.
-        400:
-          description: Bad Request - No query parameters provided.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        403:
-          description: |
-            Authorization Error 
-            - user/applications does not have access to api or resource
-            or 
-            - user does not have required permissions/BusinessActivities for the org.
 
   /organizations/{organizationId}/equipment:
     post:
@@ -184,38 +140,6 @@ paths:
           application/json:
             schema:
               $ref: 'equipment-patch.yaml'
-      responses:
-        200:
-          description: Patch Successful
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        403:
-          description: User is not authorized for this request.
-    patch:
-      tags:
-        - Equipment Resource
-      description: |
-        - Patch by OrganizationEquipment Id will allow the following
-            1. Transfer Equipment to new organization, where paired devices can also be requested for transfer along with the equipment. 
-                - Permissions: EQUIPMENT_3
-                - BusinessActivity: TRANSFER_ADMIN_RIGHTS
-            2. Update archived state of equipment, also allows to update the archived state of paired devices. 
-                - Permissions: EQUIPMENT_2
-            4. Update Name of the Equipment
-                - Permissions: EQUIPMENT_2
-                - BusinessActivity: EDIT_EQUIPMENT_LIST
-      operationId: patchEquipment
-      parameters:
-        - $ref: '#/components/parameters/id'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './equipment-patch.yaml'
       responses:
         200:
           description: Patch Successful
