@@ -139,7 +139,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'equipment-patch.yaml'
+              $ref: 'equipment.yaml'
       responses:
         200:
           description: Patch Successful
